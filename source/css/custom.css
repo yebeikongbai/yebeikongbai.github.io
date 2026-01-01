@@ -1,0 +1,46 @@
+/* ========== 玻璃质感（浅色） ========== */
+:root {
+    --yb-card-bg: rgba(255, 255, 255, 0.72);
+    --yb-card-border: rgba(255, 255, 255, 0.35);
+}
+
+/* 文章卡片、侧栏卡片、页面内容区 */
+.recent-post-item,
+.card-widget,
+#post,
+#page {
+    background: var(--yb-card-bg) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--yb-card-border);
+}
+
+/* ========== 深色模式下更舒服 ========== */
+[data-theme="dark"] .recent-post-item,
+[data-theme="dark"] .card-widget,
+[data-theme="dark"] #post,
+[data-theme="dark"] #page {
+    background: rgba(0, 0, 0, 0.55) !important;
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* 正文字体：尽量用系统字体，兼容最好 */
+body {
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+    line-height: 1.8;
+}
+
+/* 文章内容区宽度与字距更舒服 */
+#article-container {
+    font-size: 16px;
+    letter-spacing: 0.2px;
+}
+
+/* 调慢侧栏作者头像旋转速度（Butterfly） */
+.avatar-img,
+.avatar-img img,
+.card-info .avatar-img,
+.card-info .avatar-img img {
+    animation-duration: 20s !important;
+    /* 数字越大转得越慢 */
+}
