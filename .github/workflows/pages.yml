@@ -17,35 +17,28 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+    steps:- name: Install
+  run: npm ci
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "npm"
+- name: Install Hexo CLI
+  run: npm i -g hexo-cli
 
-      - name: Install
-        run: npm ci
+- name: Build Hexo
+  run: hexo clean && hexo generate
 
-      - name: Build Hexo
-        run: npx hexo clean && npx hexo generate
+- name: Disable Jekyll
+  run: touch public/.nojekyll
 
-      - name: Disable Jekyll
-        run: touch public/.nojekyll
+- name: Write health file
+  run: echo "ok $(date -u)" > public/health.txt
 
-      - name: Debug output
-        run: |
-          ls -la public
-          wc -c public/index.html
-          head -n 5 public/index.html
+- name: Debug and fail if empty
+  run: |
+    ls -la public
+    wc -c public/index.html
+    head -n 5 public/index.html
+    test -s public/index.html
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
 
   deploy:
     runs-on: ubuntu-latest
