@@ -1,11 +1,16 @@
 ---
-layout: home
-title: 夜北空白的博客
+layout: default
+title: 首页
 ---
 
-# 欢迎来到我的小站
+# 夜北空白的博客
 
-这里写：
-- 学习笔记
-- 项目复盘
-- 日常碎碎念
+## 最新文章
+<ul>
+  {% for post in site.posts %}
+    <li>
+      {{ post.date | date: "%Y-%m-%d" }} ·
+      <a href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
