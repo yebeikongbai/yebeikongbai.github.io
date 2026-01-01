@@ -18,22 +18,34 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      - uses: actions/setup-node@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
 
-      - run: npm ci
-      - run: npx hexo clean && npx hexo generate
+      - name: Install
+        run: npm ci
 
-      - run: touch public/.nojekyll
+      - name: Build Hexo
+        run: npx hexo clean && npx hexo generate
 
-      # 关键：打印一下 index.html 大小，防止又部署空站
-      - run: ls -la public && wc -c public/index.html && head -n 5 public/index.html
+      - name: Disable Jekyll
+        run: touch public/.nojekyll
 
-      - uses: actions/upload-pages-artifact@v3
+      - name: Debug output
+        run: |
+          ls -la public
+          wc -c public/index.html
+          head -n 5 public/index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
@@ -43,4 +55,5 @@ jobs:
     environment:
       name: github-pages
     steps:
-      - uses: actions/deploy-pages@v4
+      - name: Deploy
+        uses: actions/deploy-pages@v4
