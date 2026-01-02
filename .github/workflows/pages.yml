@@ -1,8 +1,9 @@
-﻿name: Pages
+name: Pages
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -11,38 +12,54 @@ permissions:
   id-token: write
 
 concurrency:
-  group: "pages"
+  group: pages
   cancel-in-progress: true
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    steps:- name: Install
-  run: npm ci
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
 
-- name: Install Hexo CLI
-  run: npm i -g hexo-cli
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
 
-- name: Build Hexo
-  run: hexo clean && hexo generate
+      - name: Install deps
+        run: npm ci
 
-- name: Disable Jekyll
-  run: touch public/.nojekyll
+      - name: Install Hexo CLI
+        run: npm i -g hexo-cli
 
-- name: Write health file
-  run: echo "ok $(date -u)" > public/health.txt
+      - name: Build Hexo
+        run: |
+          hexo clean
+          hexo generate
 
-- name: Debug and fail if empty
-  run: |
-    ls -la public
-    wc -c public/index.html
-    head -n 5 public/index.html
-    test -s public/index.html
+      - name: Disable Jekyll
+        run: touch public/.nojekyll
 
+      - name: Health file
+        run: echo "ok $(date -u)" > public/health.txt
+
+      - name: Verify output
+        run: |
+          ls -la public
+          wc -c public/index.html
+          head -n 5 public/index.html
+          test -s public/index.html
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
 
   deploy:
-    runs-on: ubuntu-latest
     needs: build
+    runs-on: ubuntu-latest
     environment:
       name: github-pages
     steps:
